@@ -1334,7 +1334,6 @@ function renderNav(activePage) {
       </div>
       <div class="nav-right">
         <a href="/about" class="nav-btn-ghost">About</a>
-        <a href="/submit" class="nav-btn-ghost">Submit</a>
         <button class="nav-hamburger" onclick="this.classList.toggle('open');document.getElementById('mobileMenu').classList.toggle('open')"><span></span><span></span><span></span></button>
       </div>
     </div>
@@ -1342,7 +1341,6 @@ function renderNav(activePage) {
   <div id="mobileMenu" class="nav-mobile-menu">
     ${mobileLinks}
     <a href="/about">About</a>
-    <a href="/submit">Submit</a>
   </div>`;
 }
 
@@ -3778,21 +3776,18 @@ export default {
         <p>whatstrending.ai is an AI intelligence dashboard that tracks what matters in artificial intelligence. News, model rankings, trending GitHub repos, tools, and comparisons — all auto-updated every 6 hours.</p>
         <h2>What we track</h2>
         <ul>
-          <li>AI news from 15+ sources, rewritten by AI for clarity</li>
-          <li>Model rankings from BenchLM.ai (updated weekly)</li>
+          <li>AI news from top tech sources, updated every 6 hours</li>
+          <li>Real-time model rankings and leaderboards</li>
           <li>100+ trending GitHub repos with trust scores</li>
           <li>50+ AI tools across 8 categories</li>
           <li>49 head-to-head tool comparisons</li>
           <li>10 topic hubs for focused exploration</li>
         </ul>
-        <h2>How it works</h2>
-        <p>The entire site runs on a single Cloudflare Worker. A cron job fires every 6 hours to fetch the latest data from RSS feeds, GitHub APIs, and model leaderboards. News articles are rewritten using Cloudflare Workers AI (Llama 3.1 8B) with quality gates to ensure every article meets a minimum standard.</p>
-        <h2>Data sources</h2>
-        <p>News: TechCrunch, The Verge, Ars Technica, WIRED, VentureBeat, MIT Tech Review, OpenAI Blog, Google AI Blog, Anthropic, DeepMind, Hugging Face, and more.</p>
-        <p>Repos: GitHub Trending API, GitHub Search API, AgentSkill.work.</p>
-        <p>Models: BenchLM.ai leaderboard API.</p>
+        <h2>Why we built this</h2>
+        <p>The AI space moves too fast. We got tired of checking 15 different sources every morning just to stay current. So we built a dashboard that does it automatically.</p>
+        <p>Everything updates every 6 hours. No manual curation, no editorial bias. Just data.</p>
         <h2>Contact</h2>
-        <p>Have feedback, suggestions, or want to submit a tool? Use the <a href="/submit">submit form</a> or reach out on <a href="https://x.com" target="_blank" rel="noopener">X / Twitter</a>.</p>
+        <p>Have feedback or suggestions? Reach out on <a href="https://x.com" target="_blank" rel="noopener">X / Twitter</a>.</p>
       </section>
       ${renderFooter()}
       </body></html>`, { headers: { 'Content-Type': 'text/html;charset=utf-8' } });
