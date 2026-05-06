@@ -2445,7 +2445,7 @@ function renderHomeDashboard({ newsLatest, modelRankings, trendingRepos, dashboa
 
     /* Ticker */
     .ticker-wrap { width: 100%; overflow: hidden; background: rgba(0,0,0,0.6); border-bottom: 1px solid var(--border); padding: 8px 0; }
-    .ticker { display: inline-flex; white-space: nowrap; animation: tickerScroll 60s linear infinite; }
+    .ticker { display: inline-flex; white-space: nowrap; animation: tickerScroll 25s linear infinite; }
     .ticker-item { display: inline-flex; align-items: center; gap: 6px; padding: 0 24px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-secondary); }
     .ticker-item .ticker-score { color: var(--accent); font-weight: 500; }
     @keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
@@ -2711,7 +2711,11 @@ function renderHTML(articles, models, trendingRepos) {
     .nav-cta:hover { background: var(--accent-hover); box-shadow: 0 4px 16px rgba(110,231,183,0.2); }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .hero { padding: 64px 0 56px; margin-bottom: 40px; text-align: center; position: relative; overflow: hidden; border-bottom: 1px solid var(--border); }
+    .hero { padding: 64px 0 56px; margin-bottom: 40px; text-align: center; position: relative; overflow: hidden; border-bottom: 1px solid var(--border); background: radial-gradient(ellipse at 30% 0%, rgba(110,231,183,0.06) 0%, transparent 50%), radial-gradient(ellipse at 70% 100%, rgba(96,165,250,0.05) 0%, transparent 50%); }
+    .hero::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(110,231,183,0.02) 60px, rgba(110,231,183,0.02) 61px); animation: heroGrid 20s linear infinite; }
+    .hero::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at 50% 50%, rgba(110,231,183,0.03), transparent 40%); animation: heroOrb 15s ease-in-out infinite; }
+    @keyframes heroGrid { 0% { transform: translateX(0); } 100% { transform: translateX(61px); } }
+    @keyframes heroOrb { 0%,100% { transform: translate(0,0); } 50% { transform: translate(30px,-20px); } }
     .hero::before { content: ''; position: absolute; bottom: -200px; left: 50%; transform: translateX(-50%); width: 600px; height: 400px; background: radial-gradient(ellipse at center, rgba(110,231,183,0.1) 0%, transparent 70%); pointer-events: none; z-index: 0; filter: blur(80px); }
     .hero-title { font-size: 40px; font-weight: 700; letter-spacing: -1.5px; line-height: 1.15; margin-bottom: 16px; color: var(--text-primary); }
     .hero-title .accent { background: linear-gradient(135deg, #00c8ff, #00ffa3, #00c8ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
@@ -2773,7 +2777,7 @@ function renderHTML(articles, models, trendingRepos) {
     .newsletter-btn { font-family: inherit; font-size: 13px; font-weight: 600; padding: 10px 16px; background: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer; transition: background var(--transition); width: 100%; }
     .newsletter-btn:hover { background: var(--accent-hover); }
     .ticker-wrap { overflow: hidden; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.01); margin-bottom: 40px; }
-    .ticker { display: flex; animation: tickerScroll 30s linear infinite; white-space: nowrap; }
+    .ticker { display: flex; animation: tickerScroll 18s linear infinite; white-space: nowrap; }
     .ticker-item { display: inline-flex; align-items: center; gap: 6px; padding: 10px 28px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-secondary); flex-shrink: 0; }
     .ticker-dot { width: 6px; height: 6px; border-radius: 50%; }
     .ticker-dot.up { background: #00ffa3; box-shadow: 0 0 6px rgba(16,185,129,0.5); }
@@ -2972,7 +2976,7 @@ function renderReposPage(repos) {
     const tl = trustLabels[r.trust] || '';
 
     return `
-    <a href="${r.url}" target="_blank" rel="noopener" class="repo-card">
+    <a href="/repos/${r.name}" class="repo-card">
       <div class="repo-card-header">
         <span class="repo-name">${r.name}</span>
         <div style="display:flex;align-items:center;gap:8px;">
@@ -3045,7 +3049,7 @@ Disallow: /api/
 Sitemap: https://whatstrending.ai/sitemap.xml`;
 }
 
-function renderSitemapXml(articles, newsArticles, tools) {
+function renderSitemapXml(articles, newsArticles, tools, trendingRepos) {
   const today = new Date().toISOString().split('T')[0];
 
   const storyUrls = articles.map(a => `
@@ -3122,7 +3126,13 @@ function renderSitemapXml(articles, newsArticles, tools) {
     <lastmod>${today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-  </url>${storyUrls}${newsUrls}${toolUrls}${compareUrls}${categoryUrls}
+  </url>${storyUrls}${newsUrls}${toolUrls}${compareUrls}${categoryUrls}${(trendingRepos||[]).map(r=>`
+  <url>
+    <loc>https://whatstrending.ai/repos/${r.name}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>`).join('')}
 </urlset>`;
 }
 
@@ -3364,6 +3374,102 @@ export default {
       });
     }
 
+    // Individual repo detail page: /repos/owner/name
+    if (path.startsWith('/repos/') && path.split('/').length >= 4) {
+      const parts = path.replace('/repos/', '').split('/');
+      const repoFullName = parts[0] + '/' + parts[1];
+      let repos = [];
+      try {
+        if (env.NEWS_KV) {
+          const raw = await env.NEWS_KV.get('trending_repos', 'json');
+          if (raw && Array.isArray(raw)) repos = raw;
+        }
+      } catch {}
+      const repo = repos.find(r => r.name === repoFullName);
+      if (!repo) {
+        return new Response('Repo not found', { status: 404 });
+      }
+      const trustColors = {verified:'#4ade80',trusted:'#60a5fa',community:'#a78bfa','new':'#fbbf24',caution:'#f87171'};
+      const trustLabels = {verified:'Verified Org',trusted:'Trusted Project',community:'Community Project','new':'New Project',caution:'Use with Caution'};
+      const tc = trustColors[repo.trust] || '#8b949e';
+      const tl = trustLabels[repo.trust] || '';
+      const owner = parts[0];
+      const repoName = parts[1];
+      const langColors = { Python:'#3572A5', TypeScript:'#3178c6', JavaScript:'#f1e05a', Rust:'#dea584', Go:'#00ADD8', Java:'#b07219' };
+      const lc = langColors[repo.language] || '#888';
+      const related = repos.filter(r => r.name !== repoFullName && r.language === repo.language).slice(0, 5);
+
+      const html = `${renderPageHead(
+        repoFullName + ' — Trending AI Repo | whatstrending.ai',
+        (repo.description || repoFullName).slice(0, 160),
+        '/repos/' + repoFullName
+      )}
+      <style>${baseCSS()}
+        .repo-detail{max-width:720px;margin:0 auto;padding:40px 20px 80px;}
+        .rd-header{margin-bottom:32px;}
+        .rd-owner{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-tertiary);margin-bottom:4px;}
+        .rd-name{font-size:28px;font-weight:700;color:var(--text-primary);margin-bottom:12px;}
+        .rd-desc{font-size:16px;color:var(--text-secondary);line-height:1.7;margin-bottom:24px;}
+        .rd-badges{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;}
+        .rd-badge{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 12px;border-radius:6px;border:1px solid;}
+        .rd-stats{display:flex;gap:20px;margin-bottom:32px;flex-wrap:wrap;}
+        .rd-stat{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-tertiary);display:flex;align-items:center;gap:6px;}
+        .rd-cta{display:inline-block;padding:12px 24px;background:var(--accent);color:white;font-weight:600;border-radius:8px;text-decoration:none;transition:background 0.2s;}
+        .rd-cta:hover{opacity:0.85;}
+        .rd-related{margin-top:48px;border-top:1px solid var(--border);padding-top:32px;}
+        .rd-related-title{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:16px;}
+        .rd-related-item{display:block;padding:12px 0;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;}
+        .rd-related-item:hover .rd-ri-name{color:var(--accent);}
+        .rd-ri-name{font-size:14px;font-weight:600;color:var(--text-primary);transition:color 0.2s;}
+        .rd-ri-desc{font-size:12px;color:var(--text-tertiary);margin-top:4px;}
+        .back-link{display:inline-block;margin-top:24px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);}
+      </style>
+      <script type="application/ld+json">${JSON.stringify({
+        "@context":"https://schema.org",
+        "@type":"SoftwareSourceCode",
+        "name":repoName,
+        "description":repo.description||'',
+        "codeRepository":repo.url,
+        "programmingLanguage":repo.language||'',
+        "author":{"@type":"Organization","name":owner},
+        "aggregateRating":{"@type":"AggregateRating","ratingValue":"5","ratingCount":repo.stars||0,"bestRating":"5"}
+      })}</script>
+      </head><body>
+      ${renderNav('repos')}
+      <section class="repo-detail" style="position:relative;z-index:1;">
+        <div class="rd-header">
+          <div class="rd-owner">${owner}</div>
+          <h1 class="rd-name">${repoName}</h1>
+          <p class="rd-desc">${repo.description || 'No description available.'}</p>
+          <div class="rd-badges">
+            ${tl ? `<span class="rd-badge" style="color:${tc};border-color:${tc}33;">${tl}</span>` : ''}
+            ${repo.language ? `<span class="rd-badge" style="color:${lc};border-color:${lc}33;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${lc};margin-right:4px;"></span>${repo.language}</span>` : ''}
+          </div>
+          <div class="rd-stats">
+            <span class="rd-stat"><svg width="14" height="14" viewBox="0 0 16 16" fill="#F59E0B"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/></svg>${repo.stars >= 1000 ? (repo.stars/1000).toFixed(1)+'k' : repo.stars} stars</span>
+            ${repo.starsToday ? `<span class="rd-stat">${repo.starsToday}</span>` : ''}
+            ${repo.source ? `<span class="rd-stat">via ${repo.source}</span>` : ''}
+          </div>
+          <a href="${repo.url}" target="_blank" rel="noopener" class="rd-cta">View on GitHub</a>
+        </div>
+        ${related.length > 0 ? `
+        <div class="rd-related">
+          <div class="rd-related-title">Related ${repo.language || ''} Repos</div>
+          ${related.map(rel => `
+          <a href="/repos/${rel.name}" class="rd-related-item">
+            <div class="rd-ri-name">${rel.name}</div>
+            <div class="rd-ri-desc">${(rel.description || '').slice(0, 100)}</div>
+          </a>`).join('')}
+        </div>` : ''}
+        <a href="/repos" class="back-link">&larr; Back to Trending Repos</a>
+      </section>
+      ${renderFooter()}
+      </body></html>`;
+      return new Response(html, {
+        headers: { 'Content-Type': 'text/html;charset=utf-8', 'Cache-Control': 'public, max-age=300' },
+      });
+    }
+
     // ---- TOOLS ROUTES ----
     if (path === '/tools') {
       const cat = url.searchParams.get('cat') || 'all';
@@ -3429,7 +3535,9 @@ export default {
         }
       } catch { /* */ }
       const allTools = await getToolsFromDB(env, 'all');
-      return new Response(renderSitemapXml(articles, newsArticles, allTools), {
+      let sitemapRepos = [];
+      try { if (env.NEWS_KV) { const rr = await env.NEWS_KV.get('trending_repos', 'json'); if (rr && Array.isArray(rr)) sitemapRepos = rr; } } catch {}
+      return new Response(renderSitemapXml(articles, newsArticles, allTools, sitemapRepos), {
         headers: { 'Content-Type': 'application/xml; charset=utf-8' },
       });
     }
