@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WhatsTrending.ai — Color Palette Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #050505;
+    color: #ededed;
+    font-family: 'Instrument Sans', sans-serif;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+  }
+  .sub {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 48px;
+  }
+  .palettes {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .palette {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .palette-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .palette-name {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .palette-vibe {
+    font-size: 12px;
+    color: #888;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .palette-preview {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .preview-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .preview-nav .logo {
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .preview-nav .btn {
+    padding: 5px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+    border: none;
+  }
+  .preview-hero {
+    text-align: center;
+    padding: 32px 16px;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .preview-hero h2 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+  .preview-hero p {
+    font-size: 13px;
+    color: #888;
+  }
+  .preview-hero .glow {
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 200px;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  .preview-cards {
+    display: flex;
+    gap: 10px;
+  }
+  .preview-card {
+    flex: 1;
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .preview-card .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+  .preview-card .title {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .preview-card .meta {
+    font-size: 11px;
+    color: #555;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .preview-bar {
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.06);
+    margin-top: 8px;
+    overflow: hidden;
+  }
+  .preview-bar .fill {
+    height: 100%;
+    border-radius: 2px;
+    width: 72%;
+  }
+  .swatches {
+    display: flex;
+    gap: 8px;
+    padding: 16px 24px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+  .swatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+  }
+  .swatch-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.1);
+  }
+  .swatch-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: #555;
+    text-align: center;
+  }
+  .number {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 48px;
+    font-weight: 700;
+    opacity: 0.06;
+  }
+</style>
+</head>
+<body>
+<h1>Color Palette Preview</h1>
+<p class="sub">whatstrending.ai — pick your vibe</p>
+
+<div class="palettes">
+
+  <!-- OPTION 1: Emerald Tech -->
+  <div class="palette" style="background:#0A0D0A;">
+    <div class="palette-header">
+      <span class="palette-name" style="color:#10B981;">1. Emerald Tech</span>
+      <span class="palette-vibe">Terminal x Bloomberg</span>
+    </div>
+    <div class="palette-preview">
+      <div class="preview-nav" style="background:#0D110D;">
+        <span class="logo">whatstrending<span style="color:#555;">.ai</span></span>
+        <span class="btn" style="background:#10B981;">Subscribe</span>
+      </div>
+      <div class="preview-hero" style="background:#0D110D;">
+        <div class="glow" style="background:#10B981;"></div>
+        <h2 style="position:relative;z-index:1;">What's Trending in <span style="color:#10B981;">AI</span></h2>
+        <p style="position:relative;z-index:1;">The latest in AI models, tools, and industry moves.</p>
+      </div>
+      <div class="preview-cards">
+        <div class="preview-card" style="background:#0D110D;">
+          <span class="tag" style="background:rgba(16,185,129,0.12);color:#10B981;">Models</span>
+          <div class="title">GPT-5 Announced</div>
+          <div class="meta">TechCrunch</div>
+          <div class="preview-bar"><div class="fill" style="background:linear-gradient(90deg,#10B981,#34D399);"></div></div>
+        </div>
+        <div class="preview-card" style="background:#0D110D;">
+          <span class="tag" style="background:rgba(16,185,129,0.12);color:#34D399;">Tools</span>
+          <div class="title">Cursor Raises $900M</div>
+          <div class="meta">The Verge</div>
+          <div class="preview-bar"><div class="fill" style="background:linear-gradient(90deg,#10B981,#34D399);width:58%;"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="swatches">
+      <div class="swatch"><div class="swatch-circle" style="background:#10B981;"></div><span class="swatch-label">Accent<br>#10B981</span></div>
+      <div class="swatch"><div class="swatch-circle" style="background:#34D399;"></div><span class="swatch-label">Glow<br>#34D399</span></div>
+      <div class="swatch"><div class="swatch-circle" style="background:#0A0D0A;"></div><span class="swatch-label">BG<br>#0A0D0A</span></div>
+      <div class="swatch"><div class="swatch-circle" style="background:#0D110D;"></div><span class="swatch-label">Surface<br>#0D110D</span></div>
+    </div>
+  </div>
+
+  <!-- OPTION 2: Cyan Circuit -->
+  <div class="palette" style="background:#090B0D;">
+    <div class="palette-header">
+      <span class="palette-name" style="color:#06B6D4;">2. Cyan Circuit</span>
+      <span class="palette-vibe">Tron x Data Dashboard</span>
+    </div>
+    <div class="palette-preview">
+      <div class="preview-nav" style="background:#0C1014;">
+        <span class="logo">whatstrending<span style="color:#555;">.ai</span></span>
+        <span class="btn" style="background:#06B6D4;">Subscribe</span>
+      </div>
+      <div class="preview-hero" style="background:#0C1014;">
+        <div class="glow" style="background:#06B6D4;"></div>
+        <h2 style="position:relative;z-index:1;">What's Trending in <span style="color:#06B6D4;">AI</span></h2>
+        <p style="position:relative;z-index:1;">The latest in AI models, tools, and industry moves.</p>
+      </div>
+      <div class="preview-cards">
+        <div class="preview-card" style="background:#0C1014;">
+          <span class="tag" style="background:rgba(6,182,212,0.12);color:#06B6D4;">Models</span>
+          <div class="title">GPT-5 Announced</div>
+          <div class="meta">TechCrunch</div>
+          <div class="preview-bar"><div class="fill" style="background:linear-gradient(90deg,#06B6D4,#22D3EE);"></div></div>
+        </div>
+        <div class="preview-card" style="background:#0C1014;">
+          <span class="tag" style="background:rgba(6,182,212,0.12);color:#22D3EE;">Tools</span>
+          <div class="title">Cursor Raises $900M</div>
+          <div class="meta">The Verge</div>
+          <div class="preview-bar"><div class="fill" style="background:linear-gradient(90deg,#06B6D4,#22D3EE);width:58%;"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="swatches">
+      <div class="swatch"><div class="swatch-circle" style="background:#06B6D4;"></div><span class="swatch-label">Accent<br>#06B6D4</span></div>
+      <div class="swatch"><div class="swatch-circle" style="background:#22D3EE;"></div><span class="swatch-label">Glow<br>#22D3EE</span></div>
+      <div class="swatch"><div class="swatch-circle" style="background:#090B0D;"></div><span class="swatch-label">BG<br>#090B0D</span></div>
+      <div class="swatch"><div class="swatch-circle" style="background:#0C1014;"></div><span class="swatch-label">Surface<br>#0C1014</span></div>
+    </div>
+  </div>
+
+  <!-- OPTION 3: Mint Premium -->
+  <div class="palette" style="background:#090B0B;">
+    <div class="palette-header">
+      <span class="palette-name" style="color:#2DD4BF;">3. Mint Premium</span>
+      <span class="palette-vibe">Fintech x Stripe</span>
+    </div>
+    <div class="palette-preview">
+      <div class="preview-nav" style="background:#0D1212;">
+        <span class="logo">whatstrending<span style="color:#555;">.ai</span></span>
+        <span class="btn" style="background:#2DD4BF;color:#000;">Subscribe</span>
+      </div>
+      <div class="preview-hero" style="background:#0D1212;">
+        <div class="glow" style="background:#2DD4BF;"></div>
+        <h2 style="position:relative;z-index:1;">What's Trending in <span style="color:#2DD4BF;">AI</span></h2>
+        <p style="position:relative;z-index:1;">The latest in AI models, tools, and industry moves.</p>
+      </div>
+      <div class="preview-cards">
+        <div class="preview-card" style="background:#0D1212;">
+          <span class="tag" style="background:rgba(45,212,191,0.12);color:#2DD4BF;">Models</span>
+          <div class="title">GPT-5 Announced</div>
+          <div class="meta">TechCrunch</div>
+          <div class="preview-bar"><div class="fill" style="background:linear-gradient(90deg,#2DD4BF,#5EEAD4);"></div></div>
+        </div>
+        <div class="preview-card" style="background:#0D1212;">
+          <span class="tag" style="background:rgba(45,212,191,0.12);color:#5EEAD4;">Tools</span>
+          <div class="title">Cursor Raises $900M</div>
+          <div class="meta">The Verge</div>
+          <div class="preview-bar"><div class="fill" style="background:linear-gradient(90deg,#2DD4BF,#5EEAD4);width:58%;"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="swatches">
+      <div class="swatch"><div class="swatch-circle" style="background:#2DD4BF;"></div><span class="swatch-label">Accent<br>#2DD4BF</span></div>
+      <div class="swatch"><div class="swatch-circle" style="background:#5EEAD4;"></div><span class="swatch-label">Glow<br>#5EEAD4</span></div>
+      <div class="swatch"><div class="swatch-circle" style="background:#090B0B;"></div><span class="swatch-label">BG<br>#090B0B</span></div>
+      <div class="swatch"><div class="swatch-circle" style="background:#0D1212;"></div><span class="swatch-label">Surface<br>#0D1212</span></div>
+    </div>
+  </div>
+
+  <!-- OPTION 4: Electric Lime -->
+  <div class="palette" style="background:#0A0B09;">
+    <div class="palette-header">
+      <span class="palette-name" style="color:#84CC16;">4. Electric Lime</span>
+      <span class="palette-vibe">Spotify x Dev Tools</span>
+    </div>
+    <div class="palette-preview">
+      <div class="preview-nav" style="background:#0E100C;">
+        <span class="logo">whatstrending<span style="color:#555;">.ai</span></span>
+        <span class="btn" style="background:#84CC16;color:#000;">Subscribe</span>
+      </div>
+      <div class="preview-hero" style="background:#0E100C;">
+        <div class="glow" style="background:#84CC16;"></div>
+        <h2 style="position:relative;z-index:1;">What's Trending in <span style="color:#84CC16;">AI</span></h2>
+        <p style="position:relative;z-index:1;">The latest in AI models, tools, and industry moves.</p>
+      </div>
+      <div class="preview-cards">
+        <div class="preview-card" style="background:#0E100C;">
+          <span class="tag" style="background:rgba(132,204,22,0.12);color:#84CC16;">Models</span>
+          <div class="title">GPT-5 Announced</div>
+          <div class="meta">TechCrunch</div>
+          <div class="preview-bar"><div class="fill" style="background:linear-gradient(90deg,#84CC16,#A3E635);"></div></div>
+        </div>
+        <div class="preview-card" style="background:#0E100C;">
+          <span class="tag" style="background:rgba(132,204,22,0.12);color:#A3E635;">Tools</span>
+          <div class="title">Cursor Raises $900M</div>
+          <div class="meta">The Verge</div>
+          <div class="preview-bar"><div class="fill" style="background:linear-gradient(90deg,#84CC16,#A3E635);width:58%;"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="swatches">
+      <div class="swatch"><div class="swatch-circle" style="background:#84CC16;"></div><span class="swatch-label">Accent<br>#84CC16</span></div>
+      <div class="swatch"><div class="swatch-circle" style="background:#A3E635;"></div><span class="swatch-label">Glow<br>#A3E635</span></div>
+      <div class="swatch"><div class="swatch-circle" style="background:#0A0B09;"></div><span class="swatch-label">BG<br>#0A0B09</span></div>
+      <div class="swatch"><div class="swatch-circle" style="background:#0E100C;"></div><span class="swatch-label">Surface<br>#0E100C</span></div>
+    </div>
+  </div>
+
+  <!-- OPTION 5: Dual Emerald + Gold -->
+  <div class="palette" style="background:#090A09;">
+    <div class="palette-header">
+      <span class="palette-name" style="color:#4ADE80;">5. Emerald Gold</span>
+      <span class="palette-vibe">Luxury x Editorial</span>
+    </div>
+    <div class="palette-preview">
+      <div class="preview-nav" style="background:#0D100D;">
+        <span class="logo">whatstrending<span style="color:#FBBF24;">.ai</span></span>
+        <span class="btn" style="background:#4ADE80;color:#000;">Subscribe</span>
+      </div>
+      <div class="preview-hero" style="background:#0D100D;">
+        <div class="glow" style="background:#4ADE80;"></div>
+        <h2 style="position:relative;z-index:1;">What's Trending in <span style="color:#4ADE80;">AI</span></h2>
+        <p style="position:relative;z-index:1;">The latest in AI models, tools, and industry moves.</p>
+      </div>
+      <div class="preview-cards">
+        <div class="preview-card" style="background:#0D100D;">
+          <span class="tag" style="background:rgba(74,222,128,0.12);color:#4ADE80;">Models</span>
+          <div class="title">GPT-5 Announced</div>
+          <div class="meta">TechCrunch</div>
+          <div class="preview-bar"><div class="fill" style="background:linear-gradient(90deg,#4ADE80,#FBBF24);"></div></div>
+        </div>
+        <div class="preview-card" style="background:#0D100D;">
+          <span class="tag" style="background:rgba(251,191,36,0.12);color:#FBBF24;">Tools</span>
+          <div class="title">Cursor Raises $900M</div>
+          <div class="meta">The Verge</div>
+          <div class="preview-bar"><div class="fill" style="background:linear-gradient(90deg,#FBBF24,#FCD34D);width:58%;"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="swatches">
+      <div class="swatch"><div class="swatch-circle" style="background:#4ADE80;"></div><span class="swatch-label">Primary<br>#4ADE80</span></div>
+      <div class="swatch"><div class="swatch-circle" style="background:#FBBF24;"></div><span class="swatch-label">Gold<br>#FBBF24</span></div>
+      <div class="swatch"><div class="swatch-circle" style="background:#090A09;"></div><span class="swatch-label">BG<br>#090A09</span></div>
+      <div class="swatch"><div class="swatch-circle" style="background:#0D100D;"></div><span class="swatch-label">Surface<br>#0D100D</span></div>
+    </div>
+  </div>
+
+  <!-- OPTION 6: Keep Indigo -->
+  <div class="palette" style="background:#09090B;">
+    <div class="palette-header">
+      <span class="palette-name" style="color:#6366F1;">6. Current (Indigo)</span>
+      <span class="palette-vibe">Linear x Vercel</span>
+    </div>
+    <div class="palette-preview">
+      <div class="preview-nav" style="background:#0F0F14;">
+        <span class="logo">whatstrending<span style="color:#555;">.ai</span></span>
+        <span class="btn" style="background:#6366F1;">Subscribe</span>
+      </div>
+      <div class="preview-hero" style="background:#0F0F14;">
+        <div class="glow" style="background:#6366F1;"></div>
+        <h2 style="position:relative;z-index:1;">What's Trending in <span style="color:#818CF8;">AI</span></h2>
+        <p style="position:relative;z-index:1;">The latest in AI models, tools, and industry moves.</p>
+      </div>
+      <div class="preview-cards">
+        <div class="preview-card" style="background:#0F0F14;">
+          <span class="tag" style="background:rgba(99,102,241,0.12);color:#6366F1;">Models</span>
+          <div class="title">GPT-5 Announced</div>
+          <div class="meta">TechCrunch</div>
+          <div class="preview-bar"><div class="fill" style="background:linear-gradient(90deg,#6366F1,#a78bfa);"></div></div>
+        </div>
+        <div class="preview-card" style="background:#0F0F14;">
+          <span class="tag" style="background:rgba(99,102,241,0.12);color:#818CF8;">Tools</span>
+          <div class="title">Cursor Raises $900M</div>
+          <div class="meta">The Verge</div>
+          <div class="preview-bar"><div class="fill" style="background:linear-gradient(90deg,#6366F1,#a78bfa);width:58%;"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="swatches">
+      <div class="swatch"><div class="swatch-circle" style="background:#6366F1;"></div><span class="swatch-label">Accent<br>#6366F1</span></div>
+      <div class="swatch"><div class="swatch-circle" style="background:#818CF8;"></div><span class="swatch-label">Glow<br>#818CF8</span></div>
+      <div class="swatch"><div class="swatch-circle" style="background:#09090B;"></div><span class="swatch-label">BG<br>#09090B</span></div>
+      <div class="swatch"><div class="swatch-circle" style="background:#0F0F14;"></div><span class="swatch-label">Surface<br>#0F0F14</span></div>
+    </div>
+  </div>
+
+</div>
+
+<p style="text-align:center;color:#333;font-size:12px;margin-top:48px;font-family:'JetBrains Mono',monospace;">Pick a number and send it</p>
+</body>
+</html>

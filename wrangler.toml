@@ -1,0 +1,23 @@
+name = "whatstrending"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+workers_dev = false
+
+routes = [
+  { pattern = "whatstrending.ai", custom_domain = true },
+]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "whatstrending-db"
+database_id = "4be4de5d-a51a-4e82-b029-74ce2c9c45cd"
+
+[[kv_namespaces]]
+binding = "NEWS_KV"
+id = "4271d8a0518d48bcb37aa270dcc08927"
+
+[ai]
+binding = "AI"
+
+[triggers]
+crons = ["0 */6 * * *"]
