@@ -1183,6 +1183,15 @@ function formatDate() {
   });
 }
 
+function formatShortDate(dateStr) {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  } catch { return ''; }
+}
+
 function renderCategoryPill(category) {
   const color = CATEGORY_COLORS[category] || '#00ffa3';
   return `<span class="category-pill" style="background: ${color}15; color: ${color}">${category}</span>`;
@@ -1198,7 +1207,7 @@ function renderFeaturedCard(article) {
         <div class="card-meta">
           <span class="meta-source">${article.source}</span>
           <span class="meta-divider"></span>
-          <span class="meta-time">${article.time || article.date || ""}</span>
+          <span class="meta-time">${formatShortDate(article.time || article.date)}</span>
         </div>
       </div>
     </a>`;
@@ -1210,7 +1219,7 @@ function renderNewsCard(article) {
       <div class="news-card-inner">
         <div class="news-card-header">
           ${renderCategoryPill(article.category || article.source || '')}
-          <span class="meta-time">${article.time || article.date || ""}</span>
+          <span class="meta-time">${formatShortDate(article.time || article.date)}</span>
         </div>
         <h3 class="news-title">${article.title}</h3>
         <p class="news-summary">${(article.summary || article.description || "").split('\n')[0].slice(0, 200)}</p>
@@ -1978,7 +1987,7 @@ function renderStoryPage(article, allArticles) {
     <div class="story-header">
       <div class="story-meta-row">
         ${renderCategoryPill(article.category)}
-        <span class="meta-time">${article.time || article.date || ""}</span>
+        <span class="meta-time">${formatShortDate(article.time || article.date)}</span>
       </div>
       <h1 class="story-title">${article.title}</h1>
       <div class="story-source">Source: <a href="#">${article.source}</a></div>
@@ -2711,11 +2720,9 @@ function renderHTML(articles, models, trendingRepos) {
     .nav-cta:hover { background: var(--accent-hover); box-shadow: 0 4px 16px rgba(110,231,183,0.2); }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .hero { padding: 64px 0 56px; margin-bottom: 40px; text-align: center; position: relative; overflow: hidden; border-bottom: 1px solid var(--border); background: radial-gradient(ellipse at 50% 50%, rgba(110,231,183,0.04) 0%, transparent 60%); }
-    .hero::before { content: ''; position: absolute; top: 50%; left: 50%; width: 300px; height: 300px; transform: translate(-50%,-50%); border-radius: 50%; background: radial-gradient(circle, rgba(110,231,183,0.08), transparent 70%); animation: heroPulse 4s ease-in-out infinite; }
-    .hero::after { content: ''; position: absolute; top: 50%; left: 50%; width: 500px; height: 500px; transform: translate(-50%,-50%); border-radius: 50%; border: 1px solid rgba(110,231,183,0.06); animation: heroPulseRing 4s ease-in-out infinite 0.5s; }
-    @keyframes heroPulse { 0%,100% { transform: translate(-50%,-50%) scale(0.8); opacity: 0.4; } 50% { transform: translate(-50%,-50%) scale(1.2); opacity: 1; } }
-    @keyframes heroPulseRing { 0%,100% { transform: translate(-50%,-50%) scale(0.6); opacity: 0; } 50% { transform: translate(-50%,-50%) scale(1); opacity: 0.5; } }
+    .hero { padding: 72px 0 56px; margin-bottom: 40px; text-align: center; position: relative; overflow: hidden; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(16,185,129,0.03) 0%, transparent 40%, rgba(59,130,246,0.03) 100%); }
+    .hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, rgba(110,231,183,0.02) 100%); }
+    .hero::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(110,231,183,0.15), transparent); }
     .hero::before { content: ''; position: absolute; bottom: -200px; left: 50%; transform: translateX(-50%); width: 600px; height: 400px; background: radial-gradient(ellipse at center, rgba(110,231,183,0.1) 0%, transparent 70%); pointer-events: none; z-index: 0; filter: blur(80px); }
     .hero-title { font-size: 40px; font-weight: 700; letter-spacing: -1.5px; line-height: 1.15; margin-bottom: 16px; color: var(--text-primary); }
     .hero-title .accent { background: linear-gradient(135deg, #00c8ff, #00ffa3, #00c8ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
@@ -2806,6 +2813,8 @@ function renderHTML(articles, models, trendingRepos) {
       .featured-card-inner { padding: 24px; }
       .featured-title { font-size: 22px; }
       .main-layout { grid-template-columns: 1fr; gap: 40px; }
+      .news-card-inner { padding-left: 8px; }
+      .container { padding-left: 16px; padding-right: 16px; }
       .nav-divider { display: none; }
       .nav-links { display: none; }
       .nav-btn-ghost { display: none; }
