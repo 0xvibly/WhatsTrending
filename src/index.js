@@ -119,7 +119,18 @@ const SAMPLE_MODELS = [
   { rank: 20, name: 'Claude Haiku 4.5', provider: 'Anthropic', score: 1320, context: '200K', pricing: '$0.80/$4', category: 'Proprietary', change: '0' },
 ];
 
-const TRENDING_TOPICS = ['AI Agents', 'Open Source LLMs', 'AI Regulation', 'Code Generation', 'AI Safety', 'Multimodal AI', 'AI Startups'];
+const TRENDING_TOPICS = [
+  { name: 'AI Agents', slug: 'ai-agents', keywords: 'agent,agentic,autonomous,multi-agent' },
+  { name: 'Open Source LLMs', slug: 'open-source-llms', keywords: 'llama,mistral,open source,open-source,deepseek,qwen' },
+  { name: 'AI Regulation', slug: 'ai-regulation', keywords: 'regulation,policy,safety,governance,law,compliance,ban' },
+  { name: 'Code Generation', slug: 'code-generation', keywords: 'code,coding,copilot,cursor,developer,programming,IDE' },
+  { name: 'AI Safety', slug: 'ai-safety', keywords: 'safety,alignment,guardrail,responsible,ethics,bias' },
+  { name: 'Multimodal AI', slug: 'multimodal-ai', keywords: 'multimodal,vision,image,video,audio,speech,visual' },
+  { name: 'AI Startups', slug: 'ai-startups', keywords: 'startup,funding,raises,series,seed,valuation,unicorn,YC' },
+  { name: 'RAG & Search', slug: 'rag-search', keywords: 'RAG,retrieval,search,vector,embedding,knowledge' },
+  { name: 'AI Infrastructure', slug: 'ai-infrastructure', keywords: 'infrastructure,GPU,chip,cloud,deploy,scale,training' },
+  { name: 'MCP & Tools', slug: 'mcp-tools', keywords: 'MCP,tool,plugin,integration,server,protocol' },
+];
 
 const CATEGORY_COLORS = {
   Models: '#00ffa3',
@@ -2906,7 +2917,7 @@ function renderHTML(articles, models, trendingRepos) {
         <div class="sidebar-section" id="trending">
           <div class="sidebar-title">Trending Topics</div>
           <div class="topics-wrap">
-            ${TRENDING_TOPICS.map((t) => `<span class="topic-pill">${t}</span>`).join('')}
+            ${TRENDING_TOPICS.map((t) => `<a href="/topic/${t.slug}" class="topic-pill" style="text-decoration:none;color:inherit;">${t.name}</a>`).join('')}
           </div>
         </div>
 
@@ -3195,7 +3206,13 @@ function renderSitemapXml(articles, newsArticles, tools, trendingRepos) {
     <lastmod>${today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-  </url>${storyUrls}${newsUrls}${toolUrls}${compareUrls}${categoryUrls}${(trendingRepos||[]).map(r=>`
+  </url>${storyUrls}${newsUrls}${toolUrls}${compareUrls}${categoryUrls}${TRENDING_TOPICS.map(t=>`
+  <url>
+    <loc>https://whatstrending.ai/topic/${t.slug}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>`).join('')}${(trendingRepos||[]).map(r=>`
   <url>
     <loc>https://whatstrending.ai/repos/${r.name}</loc>
     <lastmod>${today}</lastmod>
@@ -3427,6 +3444,77 @@ export default {
       }
       // 404 fallback
       return new Response('Not found', { status: 404 });
+    }
+
+    // ---- TOPIC PAGES ----
+    if (path.startsWith('/topic/')) {
+      const topicSlug = path.replace('/topic/', '');
+      const topic = TRENDING_TOPICS.find(t => t.slug === topicSlug);
+      if (!topic) return new Response('Topic not found', { status: 404 });
+      const kws = topic.keywords.split(',').map(k => k.trim().toLowerCase());
+      let allNews = [], allRepos = [];
+      try {
+        if (env.NEWS_KV) {
+          const nr = await env.NEWS_KV.get('news_index', 'json');
+          if (nr && Array.isArray(nr)) allNews = nr;
+          const rr = await env.NEWS_KV.get('trending_repos', 'json');
+          if (rr && Array.isArray(rr)) allRepos = rr;
+        }
+      } catch {}
+      const matchKw = (text) => kws.some(k => (text || '').toLowerCase().includes(k));
+      const topicNews = allNews.filter(a => matchKw(a.title) || matchKw(a.summary) || matchKw(a.category)).slice(0, 20);
+      const topicRepos = allRepos.filter(r => matchKw(r.name) || matchKw(r.description)).slice(0, 20);
+      const topicTools = AI_TOOLS_SEED.filter(t => matchKw(t.name) || matchKw(t.description) || matchKw(t.category)).slice(0, 10);
+
+      const html = `${renderPageHead(
+        topic.name + ' — AI Trends | whatstrending.ai',
+        'Latest news, repos, and tools about ' + topic.name + '. Updated every 6 hours.',
+        '/topic/' + topic.slug
+      )}
+      <style>${baseCSS()}
+        .topic-hero{padding:56px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px;}
+        .topic-title{font-size:32px;font-weight:700;letter-spacing:-1px;color:var(--text-primary);margin-bottom:8px;}
+        .topic-sub{font-size:14px;color:var(--text-secondary);}
+        .topic-section{margin-bottom:48px;}
+        .topic-section-title{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+        .topic-item{display:block;padding:16px 0;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;transition:all 0.2s;}
+        .topic-item:hover{padding-left:8px;}
+        .ti-title{font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:4px;}
+        .ti-meta{font-size:12px;color:var(--text-tertiary);font-family:'JetBrains Mono',monospace;}
+        .ti-desc{font-size:13px;color:var(--text-secondary);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+        .topic-empty{color:var(--text-tertiary);font-size:13px;padding:20px 0;}
+        .topic-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px;}
+        .topic-pills a{font-size:12px;color:var(--text-secondary);border:1px solid var(--border);padding:4px 12px;border-radius:6px;text-decoration:none;transition:border-color 0.2s;}
+        .topic-pills a:hover{border-color:var(--accent);color:var(--accent);}
+      </style>
+      <script type="application/ld+json">${JSON.stringify({"@context":"https://schema.org","@type":"CollectionPage","name":topic.name,"description":"Latest AI trends about "+topic.name,"url":"https://whatstrending.ai/topic/"+topic.slug})}</script>
+      </head><body>
+      ${renderNav('trending')}
+      <section class="topic-hero"><div class="container" style="position:relative;z-index:1;">
+        <h1 class="topic-title">${topic.name}</h1>
+        <p class="topic-sub">News, repos, and tools about ${topic.name}. Auto-updated every 6 hours.</p>
+      </div></section>
+      <div class="container" style="position:relative;z-index:1;">
+        <div class="topic-section">
+          <div class="topic-section-title">Latest News</div>
+          ${topicNews.length > 0 ? topicNews.map(a => `<a href="/news/${a.slug}" class="topic-item"><div class="ti-title">${a.title}</div><div class="ti-meta">${a.source} · ${formatShortDate(a.date)}</div></a>`).join('') : '<div class="topic-empty">No news found for this topic yet.</div>'}
+        </div>
+        <div class="topic-section">
+          <div class="topic-section-title">Trending Repos</div>
+          ${topicRepos.length > 0 ? topicRepos.map(r => `<a href="/repos/${r.name}" class="topic-item"><div class="ti-title">${r.name}</div><div class="ti-desc">${(r.description||'').slice(0,120)}</div><div class="ti-meta">${r.language||''} · ${r.stars>=1000?(r.stars/1000).toFixed(1)+'k':r.stars} stars</div></a>`).join('') : '<div class="topic-empty">No repos found for this topic yet.</div>'}
+        </div>
+        ${topicTools.length > 0 ? `<div class="topic-section">
+          <div class="topic-section-title">Related Tools</div>
+          ${topicTools.map(t => `<a href="/tools/${t.name.toLowerCase().replace(/[^a-z0-9]+/g,'-')}" class="topic-item"><div class="ti-title">${t.name}</div><div class="ti-desc">${t.description||''}</div></a>`).join('')}
+        </div>` : ''}
+        <div class="topic-section">
+          <div class="topic-section-title">Other Topics</div>
+          <div class="topic-pills">${TRENDING_TOPICS.filter(t=>t.slug!==topicSlug).map(t=>`<a href="/topic/${t.slug}">${t.name}</a>`).join('')}</div>
+        </div>
+      </div>
+      ${renderFooter()}
+      </body></html>`;
+      return new Response(html, { headers: { 'Content-Type': 'text/html;charset=utf-8', 'Cache-Control': 'public, max-age=300' } });
     }
 
     // ---- REPOS ROUTE ----
