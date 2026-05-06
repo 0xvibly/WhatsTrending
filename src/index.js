@@ -990,13 +990,15 @@ async function fetchModelRankings(env) {
       date: data.lastUpdated || new Date().toISOString().split('T')[0],
       source: 'BenchLM.ai',
       categories: {
-        overall: data.models.map((m, i) => ({
-          rank: m.rank || i + 1,
-          name: m.model,
-          score: m.overallScore,
-          provider: m.creator,
-          pricing: m.inputPrice ? `$${m.inputPrice}/$${m.outputPrice}` : 'N/A',
-        })),
+        overall: data.models
+          .map(m => ({
+            name: m.model,
+            score: m.overallScore,
+            provider: m.creator,
+            pricing: m.inputPrice ? `$${m.inputPrice}/$${m.outputPrice}` : 'N/A',
+          }))
+          .sort((a, b) => b.score - a.score)
+          .map((m, i) => ({ ...m, rank: i + 1 })),
       }
     };
 
@@ -1009,12 +1011,14 @@ async function fetchModelRankings(env) {
         if (catResp.ok) {
           const catData = await catResp.json();
           if (catData.models) {
-            rankings.categories[cat] = catData.models.map((m, i) => ({
-              rank: m.rank || i + 1,
-              name: m.model,
-              score: m.overallScore,
-              provider: m.creator,
-            }));
+            rankings.categories[cat] = catData.models
+              .map(m => ({
+                name: m.model,
+                score: m.overallScore || m.categoryScores?.[cat] || 0,
+                provider: m.creator,
+              }))
+              .sort((a, b) => b.score - a.score)
+              .map((m, i) => ({ ...m, rank: i + 1 }));
           }
         }
       } catch (e) {}
@@ -1437,7 +1441,7 @@ function baseCSS() {
       --bg: #0A0A0A; --surface: #0A0A0A; --border: rgba(255,255,255,0.07);
       --border-hover: rgba(16,185,129,0.25); --text-primary: #EDEDED;
       --text-secondary: #888888; --text-tertiary: #555555;
-      --accent: #6ee7b7; --accent-hover: #a5f3fc; --radius: 12px; --transition: 0.2s ease;
+      --accent: #34d399; --accent-hover: #6ee7b7; --radius: 12px; --transition: 0.2s ease;
     }
     html { font-size: 15px; -webkit-font-smoothing: antialiased; }
     body { font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text-primary); line-height: 1.7; min-height: 100vh; }
@@ -2437,7 +2441,7 @@ function renderHomeDashboard({ newsLatest, modelRankings, trendingRepos, dashboa
       --bg: #0A0A0A; --surface: #0A0A0A; --surface-raised: #0A0A0A;
       --border: rgba(255,255,255,0.07); --border-hover: rgba(16,185,129,0.25);
       --text-primary: #EDEDED; --text-secondary: #888888; --text-tertiary: #555555;
-      --accent: #6ee7b7; --accent-hover: #a5f3fc; --success: #22C55E; --warning: #F59E0B;
+      --accent: #34d399; --accent-hover: #6ee7b7; --success: #22C55E; --warning: #F59E0B;
       --radius: 12px; --transition: 0.2s ease;
     }
     html { font-size: 15px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
@@ -2729,7 +2733,7 @@ function renderHTML(articles, models, trendingRepos) {
       --bg: #0A0A0A; --surface: #0A0A0A; --surface-raised: #0A0A0A;
       --border: rgba(255,255,255,0.07); --border-hover: rgba(16,185,129,0.25);
       --text-primary: #EDEDED; --text-secondary: #888888; --text-tertiary: #555555;
-      --accent: #6ee7b7; --accent-hover: #a5f3fc; --success: #22C55E; --warning: #F59E0B;
+      --accent: #34d399; --accent-hover: #6ee7b7; --success: #22C55E; --warning: #F59E0B;
       --radius: 12px; --transition: 0.2s ease;
     }
     html { font-size: 15px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
