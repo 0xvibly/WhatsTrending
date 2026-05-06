@@ -1910,8 +1910,22 @@ function renderCategoryPage(category, tools) {
 // COMPARISON PAGE
 // ---------------------------------------------------------------------------
 
+const COMPARE_CONTENT = {
+  'chatgpt-vs-claude': {verdict:'Claude for writing and analysis. ChatGPT for general use and plugins.',pros_a:['Huge plugin ecosystem and GPT Store','Better at web browsing and real-time data','More conversational and creative tone','Image generation with DALL-E built in'],pros_b:['Longer context window (200K vs 128K tokens)','Better at nuanced writing and following instructions','Stronger at code analysis and debugging','More honest about what it does not know'],best_a:'Best for: browsing the web, using plugins, image generation, casual chat',best_b:'Best for: long document analysis, coding, writing, and research tasks'},
+  'cursor-vs-copilot': {verdict:'Cursor for AI-native coding. Copilot for seamless GitHub integration.',pros_a:['Full IDE with AI built into every feature','Multi-file editing and codebase awareness','Chat that understands your entire project','Supports Claude, GPT, and custom models'],pros_b:['Native GitHub integration','Works inside VS Code without switching','Lower price for individual developers','Copilot Workspace for planning features'],best_a:'Best for: AI-first developers who want maximum AI assistance',best_b:'Best for: developers already in the GitHub ecosystem'},
+  'chatgpt-vs-gemini': {verdict:'ChatGPT for general AI tasks. Gemini for Google ecosystem integration.',pros_a:['Larger plugin ecosystem','Better at creative writing','More established with wider adoption','GPT Store for specialized tools'],pros_b:['Multimodal from the ground up (text, image, video, audio)','Deep Google Workspace integration','Longer context window','Free tier includes advanced features'],best_a:'Best for: creative work, plugins, established AI workflows',best_b:'Best for: Google users, multimodal tasks, long documents'},
+  'midjourney-vs-dall-e': {verdict:'Midjourney for artistic quality. DALL-E for ease of use and editing.',pros_a:['Superior artistic and aesthetic quality','Strong community and style inspiration','Better at photorealism and stylized art','Consistent high-quality outputs'],pros_b:['Built into ChatGPT (no separate app needed)','Better at text rendering in images','Inpainting and editing capabilities','More accessible for beginners'],best_a:'Best for: artists, designers, high-quality creative work',best_b:'Best for: quick generation, text in images, editing existing images'},
+  'perplexity-vs-chatgpt': {verdict:'Perplexity for research with sources. ChatGPT for general AI tasks.',pros_a:['Always cites sources with links','Real-time web search built in','Focused on accuracy and factual answers','Clean interface for research'],pros_b:['More versatile (writing, coding, analysis, images)','Plugin ecosystem','Better at creative and open-ended tasks','Stronger at code generation'],best_a:'Best for: research, fact-checking, finding sources',best_b:'Best for: creative work, coding, general-purpose AI assistance'},
+  'claude-vs-gemini': {verdict:'Claude for depth and accuracy. Gemini for Google integration and multimodal.',pros_a:['200K context window','Superior at following complex instructions','Better writing quality','More transparent about limitations'],pros_b:['Native multimodal (image, video, audio)','Google Workspace integration','Free tier with advanced features','Better at real-time information'],best_a:'Best for: long documents, coding, precise instructions',best_b:'Best for: multimodal tasks, Google users, real-time data'},
+  'cursor-vs-windsurf': {verdict:'Cursor for power users. Windsurf for a smoother out-of-box experience.',pros_a:['More mature with larger community','Multi-model support (Claude, GPT, custom)','Deeper codebase awareness','More keyboard shortcuts and power features'],pros_b:['Cleaner UI and onboarding','Cascade feature for multi-step tasks','Better free tier','Smoother learning curve'],best_a:'Best for: experienced developers wanting maximum control',best_b:'Best for: developers who want a polished, easy-to-start experience'},
+  'sora-vs-runway': {verdict:'Sora for cinematic quality. Runway for production workflows.',pros_a:['Higher visual quality and realism','Better physics simulation','Longer video generation','OpenAI ecosystem integration'],pros_b:['Available now with production tools','Video editing features built in','Image-to-video and video-to-video','Better for professional workflows'],best_a:'Best for: highest quality AI video, creative exploration',best_b:'Best for: professional video production, editing workflows'},
+  'claude-vs-chatgpt': {verdict:'Claude for writing and code. ChatGPT for ecosystem and versatility.',pros_a:['200K token context (reads entire codebases)','Better at following complex prompts','Superior code generation and analysis','More honest and nuanced responses'],pros_b:['Plugins, GPT Store, DALL-E, browsing','Larger user community and resources','Better at casual conversation','More integrations with third-party tools'],best_a:'Best for: professional writing, coding, long document analysis',best_b:'Best for: general use, creative tasks, plugins, image generation'},
+  'gpt-5-vs-claude-opus': {verdict:'Both are frontier models. GPT-5 for breadth, Opus for depth.',pros_a:['Multimodal native (text, image, audio, video)','Stronger at real-time web tasks','Larger training data and knowledge','Better plugin ecosystem'],pros_b:['Largest context window in the industry','Superior reasoning and instruction following','Better at code and technical analysis','More reliable and consistent outputs'],best_a:'Best for: multimodal tasks, real-time info, plugin workflows',best_b:'Best for: complex reasoning, coding, professional writing'},
+};
+
 function renderComparePage(comparison, toolA, toolB) {
   const titleText = `${comparison.a} vs ${comparison.b}`;
+  const richContent = COMPARE_CONTENT[comparison.slug];
   const pricingColor = (p) => p === 'free' ? '#00ffa3' : p === 'freemium' ? '#F59E0B' : '#EC4899';
 
   return `${renderPageHead(
@@ -1989,6 +2003,31 @@ function renderComparePage(comparison, toolA, toolB) {
         ${toolB ? `<a href="${toolB.url}" target="_blank" rel="noopener" class="compare-cta">Visit ${toolB.name}</a>` : ''}
       </div>
     </div>
+
+    ${richContent ? `
+    <div style="margin:48px 0;padding:32px;background:var(--surface);border:1px solid var(--border);border-radius:12px;">
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:20px;color:var(--text-primary);">The Verdict</h2>
+      <p style="font-size:16px;color:var(--accent);font-weight:600;margin-bottom:24px;">${richContent.verdict}</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <div>
+          <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--text-primary);">${comparison.a} Strengths</h3>
+          <ul style="list-style:none;padding:0;margin:0;">
+            ${richContent.pros_a.map(function(p){return '<li style="font-size:13px;color:var(--text-secondary);line-height:1.8;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">+</span>'+p+'</li>';}).join('')}
+          </ul>
+          <p style="font-size:12px;color:var(--text-tertiary);margin-top:12px;font-style:italic;">${richContent.best_a}</p>
+        </div>
+        <div>
+          <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--text-primary);">${comparison.b} Strengths</h3>
+          <ul style="list-style:none;padding:0;margin:0;">
+            ${richContent.pros_b.map(function(p){return '<li style="font-size:13px;color:var(--text-secondary);line-height:1.8;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:#60a5fa;">+</span>'+p+'</li>';}).join('')}
+          </ul>
+          <p style="font-size:12px;color:var(--text-tertiary);margin-top:12px;font-style:italic;">${richContent.best_b}</p>
+        </div>
+      </div>
+    </div>` : `
+    <div style="margin:48px 0;padding:24px;text-align:center;color:var(--text-tertiary);font-size:13px;">
+      Detailed comparison coming soon. Check back for in-depth analysis.
+    </div>`}
 
     <div class="other-comparisons">
       <h3>More Comparisons</h3>
