@@ -260,6 +260,25 @@ const COMPARISONS = [
   { a: 'Linear', b: 'Jira', slug: 'linear-vs-jira' },
   { a: 'Warp', b: 'iTerm', slug: 'warp-vs-iterm' },
   { a: 'Raycast', b: 'Alfred', slug: 'raycast-vs-alfred' },
+  { a: 'Perplexity', b: 'Google', slug: 'perplexity-vs-google' },
+  { a: 'Claude Code', b: 'Codex', slug: 'claude-code-vs-codex' },
+  { a: 'Gemini', b: 'GPT-5', slug: 'gemini-vs-gpt-5' },
+  { a: 'Notion', b: 'Obsidian', slug: 'notion-vs-obsidian' },
+  { a: 'Figma AI', b: 'v0', slug: 'figma-ai-vs-v0' },
+  { a: 'Suno', b: 'Udio', slug: 'suno-vs-udio' },
+  { a: 'LangChain', b: 'LlamaIndex', slug: 'langchain-vs-llamaindex' },
+  { a: 'Pinecone', b: 'Weaviate', slug: 'pinecone-vs-weaviate' },
+  { a: 'Hugging Face', b: 'Replicate', slug: 'huggingface-vs-replicate' },
+  { a: 'Stable Diffusion', b: 'DALL-E', slug: 'stable-diffusion-vs-dall-e' },
+  { a: 'Claude', b: 'ChatGPT', slug: 'claude-vs-chatgpt' },
+  { a: 'Bolt', b: 'v0', slug: 'bolt-vs-v0' },
+  { a: 'Aider', b: 'Cursor', slug: 'aider-vs-cursor' },
+  { a: 'OpenRouter', b: 'Together AI', slug: 'openrouter-vs-together-ai' },
+  { a: 'Groq', b: 'Fireworks', slug: 'groq-vs-fireworks' },
+  { a: 'Ollama', b: 'LM Studio', slug: 'ollama-vs-lm-studio' },
+  { a: 'Midjourney', b: 'Flux', slug: 'midjourney-vs-flux' },
+  { a: 'Whisper', b: 'Deepgram', slug: 'whisper-vs-deepgram' },
+  { a: 'Stripe', b: 'Lemonsqueezy', slug: 'stripe-vs-lemonsqueezy' },
 ];
 
 const TOOL_CATEGORIES = ['coding', 'writing', 'image', 'video', 'chat', 'productivity', 'search', 'devtools'];
@@ -284,6 +303,11 @@ const RSS_FEEDS = [
   { url: 'https://the-decoder.com/feed/', source: 'The Decoder' },
   { url: 'https://www.artificialintelligence-news.com/feed/', source: 'AI News' },
   { url: 'https://syncedreview.com/feed/', source: 'Synced' },
+  { url: 'https://www.unite.ai/feed/', source: 'Unite.AI' },
+  { url: 'https://www.infoworld.com/category/artificial-intelligence/feed/', source: 'InfoWorld' },
+  { url: 'https://machinelearningmastery.com/feed/', source: 'ML Mastery' },
+  { url: 'https://towardsdatascience.com/feed', source: 'Towards Data Science' },
+  { url: 'https://www.zdnet.com/topic/artificial-intelligence/rss.xml', source: 'ZDNet AI' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -1385,6 +1409,7 @@ function renderPageHead(title, description, canonicalPath) {
   <meta property="og:image" content="https://whatstrending.ai/og-preview.jpg">
 
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@0xvibly">
   <meta name="twitter:title" content="${title}">
   <meta name="twitter:description" content="${description}">
 
@@ -2418,7 +2443,7 @@ function renderHomeDashboard({ newsLatest, modelRankings, trendingRepos, dashboa
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>whatstrending.ai — AI Intelligence Dashboard</title>
-  <meta name="description" content="The latest AI news, model rankings, trending repos, and tool discovery. Updated daily.">
+  <meta name="description" content="The latest AI news, model rankings, trending repos, and tool discovery. Updated every 6 hours.">
   <meta name="robots" content="index, follow">
 
   <!-- Google tag (gtag.js) -->
@@ -2433,10 +2458,11 @@ function renderHomeDashboard({ newsLatest, modelRankings, trendingRepos, dashboa
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://whatstrending.ai">
   <meta property="og:title" content="whatstrending.ai — AI Intelligence Dashboard">
-  <meta property="og:description" content="The latest AI news, model rankings, trending repos, and tool discovery. Updated daily.">
+  <meta property="og:description" content="The latest AI news, model rankings, trending repos, and tool discovery. Updated every 6 hours.">
   <meta property="og:image" content="https://whatstrending.ai/og-preview.jpg">
 
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@0xvibly">
   <meta name="twitter:title" content="whatstrending.ai — AI Intelligence Dashboard">
   <meta name="twitter:description" content="The latest AI news, model rankings, trending repos, and tool discovery.">
 
@@ -2725,12 +2751,13 @@ function renderHTML(articles, models, trendingRepos) {
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://whatstrending.ai">
   <meta property="og:title" content="whatstrending.ai — AI Intelligence Dashboard">
-  <meta property="og:description" content="The latest AI news, model rankings, and tool discovery. Updated daily.">
+  <meta property="og:description" content="The latest AI news, model rankings, and tool discovery. Updated every 6 hours.">
   <meta property="og:image" content="https://whatstrending.ai/og-preview.jpg">
 
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@0xvibly">
   <meta name="twitter:title" content="whatstrending.ai — AI Intelligence Dashboard">
-  <meta name="twitter:description" content="The latest AI news, model rankings, and tool discovery. Updated daily.">
+  <meta name="twitter:description" content="The latest AI news, model rankings, and tool discovery. Updated every 6 hours.">
 
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><linearGradient id='fg' x1='0' y1='0' x2='1' y2='1'><stop offset='0%25' stop-color='%2300ffa3'/><stop offset='100%25' stop-color='%2300c8ff'/></linearGradient></defs><circle cx='60' cy='60' r='52' stroke='url(%23fg)' stroke-width='2.5' fill='none'/><circle cx='60' cy='60' r='36' stroke='%2300ffa3' stroke-width='1' fill='none' opacity='0.08'/><circle cx='60' cy='60' r='24' stroke='%2300ffa3' stroke-width='1' fill='none' opacity='0.12'/><path d='M60 24 A36 36 0 0 1 96 60' stroke='%2300ffa3' stroke-width='2.5' stroke-linecap='round' fill='none' opacity='0.8'/><path d='M60 36 A24 24 0 0 1 84 60' stroke='%2300ffa3' stroke-width='2.5' stroke-linecap='round' fill='none' opacity='0.5'/><circle cx='60' cy='60' r='5' fill='%2300ffa3'/></svg>">
   <link rel="canonical" href="https://whatstrending.ai">
@@ -3254,7 +3281,9 @@ function renderSitemapXml(articles, newsArticles, tools, trendingRepos) {
     <lastmod>${today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-  </url>`).join('')}${(trendingRepos||[]).map(r=>`
+  </url>`).join('')}
+  <url><loc>https://whatstrending.ai/about</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://whatstrending.ai/search</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.3</priority></url>${(trendingRepos||[]).map(r=>`
   <url>
     <loc>https://whatstrending.ai/repos/${r.name}</loc>
     <lastmod>${today}</lastmod>
