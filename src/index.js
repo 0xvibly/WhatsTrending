@@ -2952,9 +2952,13 @@ function renderHTML(articles, models, trendingRepos) {
 
 function renderReposPage(repos) {
   const repoCards = repos.map(r => {
-    const createdDate = new Date(r.created_at);
-    const daysAgo = Math.floor((Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
-    const daysLabel = daysAgo === 0 ? 'today' : daysAgo === 1 ? '1 day ago' : `${daysAgo} days ago`;
+    let daysLabel = '';
+    if (r.created_at) {
+      const createdDate = new Date(r.created_at);
+      const daysAgo = Math.floor((Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
+      if (!isNaN(daysAgo) && daysAgo >= 0) daysLabel = daysAgo === 0 ? 'today' : daysAgo === 1 ? '1 day ago' : `${daysAgo} days ago`;
+    }
+    if (r.starsToday) daysLabel = r.starsToday;
     const langColors = {
       Python: '#3572A5', TypeScript: '#3178c6', JavaScript: '#f1e05a',
       Rust: '#dea584', Go: '#00ADD8', Java: '#b07219', 'C++': '#f34b7d',
@@ -2962,17 +2966,24 @@ function renderReposPage(repos) {
     };
     const langColor = langColors[r.language] || '#888';
     const starsFormatted = r.stars >= 1000 ? (r.stars / 1000).toFixed(1) + 'k' : r.stars;
+    const trustColors = {verified:'#4ade80',trusted:'#60a5fa',community:'#a78bfa','new':'#fbbf24',caution:'#f87171'};
+    const trustLabels = {verified:'Verified',trusted:'Trusted',community:'Community','new':'New',caution:'Caution'};
+    const tc = trustColors[r.trust] || '';
+    const tl = trustLabels[r.trust] || '';
 
     return `
     <a href="${r.url}" target="_blank" rel="noopener" class="repo-card">
       <div class="repo-card-header">
         <span class="repo-name">${r.name}</span>
-        <span class="repo-stars">${starsFormatted} stars</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${tl ? `<span style="font-size:9px;font-family:'JetBrains Mono',monospace;color:${tc};border:1px solid ${tc}33;padding:1px 6px;border-radius:3px;">${tl}</span>` : ''}
+          <span class="repo-stars">${starsFormatted} stars</span>
+        </div>
       </div>
-      <p class="repo-desc">${r.description}</p>
+      <p class="repo-desc">${r.description || 'No description available'}</p>
       <div class="repo-meta">
-        <span class="repo-lang"><span class="repo-lang-dot" style="background:${langColor}"></span>${r.language}</span>
-        <span class="repo-created">Created ${daysLabel}</span>
+        <span class="repo-lang"><span class="repo-lang-dot" style="background:${langColor}"></span>${r.language || 'Unknown'}</span>
+        ${daysLabel ? `<span class="repo-created">${daysLabel}</span>` : ''}
       </div>
     </a>`;
   }).join('');
