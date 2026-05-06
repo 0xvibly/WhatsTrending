@@ -1333,15 +1333,16 @@ function renderNav(activePage) {
         </ul>
       </div>
       <div class="nav-right">
-        <button class="nav-btn-ghost">About</button>
-        <button class="nav-cta">Subscribe</button>
+        <a href="/about" class="nav-btn-ghost">About</a>
+        <a href="/submit" class="nav-btn-ghost">Submit</a>
         <button class="nav-hamburger" onclick="this.classList.toggle('open');document.getElementById('mobileMenu').classList.toggle('open')"><span></span><span></span><span></span></button>
       </div>
     </div>
   </nav>
   <div id="mobileMenu" class="nav-mobile-menu">
     ${mobileLinks}
-    <a href="#">About</a>
+    <a href="/about">About</a>
+    <a href="/submit">Submit</a>
   </div>`;
 }
 
@@ -3697,6 +3698,121 @@ export default {
       getArticlesForDisplay(env),
       getModelsFromDB(env, {}),
     ]);
+
+    // ---- ABOUT PAGE ----
+    if (path === '/about') {
+      return new Response(`${renderPageHead('About — whatstrending.ai','About whatstrending.ai, an AI intelligence dashboard tracking what matters in artificial intelligence.','/about')}
+      <style>${baseCSS()}
+        .about{max-width:680px;margin:0 auto;padding:60px 20px 80px;}
+        .about h1{font-size:32px;font-weight:700;margin-bottom:24px;letter-spacing:-1px;}
+        .about p{font-size:15px;color:var(--text-secondary);line-height:1.8;margin-bottom:20px;}
+        .about h2{font-size:18px;font-weight:600;margin:32px 0 12px;color:var(--text-primary);}
+        .about a{color:var(--accent);}
+        .about ul{margin:0 0 20px 20px;color:var(--text-secondary);line-height:1.8;}
+      </style>
+      <script type="application/ld+json">${JSON.stringify({"@context":"https://schema.org","@type":"AboutPage","name":"About whatstrending.ai","url":"https://whatstrending.ai/about"})}</script>
+      </head><body>
+      ${renderNav('about')}
+      <section class="about" style="position:relative;z-index:1;">
+        <h1>About whatstrending.ai</h1>
+        <p>whatstrending.ai is an AI intelligence dashboard that tracks what matters in artificial intelligence. News, model rankings, trending GitHub repos, tools, and comparisons — all auto-updated every 6 hours.</p>
+        <h2>What we track</h2>
+        <ul>
+          <li>AI news from 15+ sources, rewritten by AI for clarity</li>
+          <li>Model rankings from BenchLM.ai (updated weekly)</li>
+          <li>100+ trending GitHub repos with trust scores</li>
+          <li>50+ AI tools across 8 categories</li>
+          <li>49 head-to-head tool comparisons</li>
+          <li>10 topic hubs for focused exploration</li>
+        </ul>
+        <h2>How it works</h2>
+        <p>The entire site runs on a single Cloudflare Worker. A cron job fires every 6 hours to fetch the latest data from RSS feeds, GitHub APIs, and model leaderboards. News articles are rewritten using Cloudflare Workers AI (Llama 3.1 8B) with quality gates to ensure every article meets a minimum standard.</p>
+        <h2>Data sources</h2>
+        <p>News: TechCrunch, The Verge, Ars Technica, WIRED, VentureBeat, MIT Tech Review, OpenAI Blog, Google AI Blog, Anthropic, DeepMind, Hugging Face, and more.</p>
+        <p>Repos: GitHub Trending API, GitHub Search API, AgentSkill.work.</p>
+        <p>Models: BenchLM.ai leaderboard API.</p>
+        <h2>Contact</h2>
+        <p>Have feedback, suggestions, or want to submit a tool? Use the <a href="/submit">submit form</a> or reach out on <a href="https://x.com" target="_blank" rel="noopener">X / Twitter</a>.</p>
+      </section>
+      ${renderFooter()}
+      </body></html>`, { headers: { 'Content-Type': 'text/html;charset=utf-8' } });
+    }
+
+    // ---- SUBMIT PAGE ----
+    if (path === '/submit') {
+      return new Response(`${renderPageHead('Submit a Tool or Repo — whatstrending.ai','Submit an AI tool or GitHub repository to be featured on whatstrending.ai.','/submit')}
+      <style>${baseCSS()}
+        .submit-page{max-width:580px;margin:0 auto;padding:60px 20px 80px;}
+        .submit-page h1{font-size:28px;font-weight:700;margin-bottom:8px;letter-spacing:-1px;}
+        .submit-page .sub{font-size:14px;color:var(--text-tertiary);margin-bottom:32px;}
+        .sf-group{margin-bottom:20px;}
+        .sf-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:6px;display:block;}
+        .sf-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text-primary);font-family:inherit;font-size:14px;outline:none;transition:border-color 0.2s;}
+        .sf-input:focus{border-color:var(--accent);}
+        .sf-textarea{min-height:100px;resize:vertical;}
+        .sf-btn{width:100%;padding:14px;background:var(--accent);color:white;font-weight:600;border:none;border-radius:8px;cursor:pointer;font-size:15px;transition:opacity 0.2s;margin-top:8px;}
+        .sf-btn:hover{opacity:0.85;}
+        .sf-note{font-size:12px;color:var(--text-tertiary);margin-top:16px;text-align:center;}
+      </style>
+      </head><body>
+      ${renderNav('submit')}
+      <section class="submit-page" style="position:relative;z-index:1;">
+        <h1>Submit a Tool or Repo</h1>
+        <p class="sub">Know an AI tool or GitHub repo that should be featured? Let us know.</p>
+        <form id="submitForm" onsubmit="handleSubmit(event)">
+          <div class="sf-group">
+            <label class="sf-label">Type</label>
+            <select class="sf-input" name="type" required><option value="tool">AI Tool</option><option value="repo">GitHub Repo</option></select>
+          </div>
+          <div class="sf-group">
+            <label class="sf-label">Name</label>
+            <input class="sf-input" name="name" placeholder="e.g. Claude Code" required/>
+          </div>
+          <div class="sf-group">
+            <label class="sf-label">URL</label>
+            <input class="sf-input" name="url" type="url" placeholder="https://..." required/>
+          </div>
+          <div class="sf-group">
+            <label class="sf-label">Description</label>
+            <textarea class="sf-input sf-textarea" name="description" placeholder="What does it do?"></textarea>
+          </div>
+          <div class="sf-group">
+            <label class="sf-label">Your email (optional)</label>
+            <input class="sf-input" name="email" type="email" placeholder="you@email.com"/>
+          </div>
+          <button type="submit" class="sf-btn">Submit</button>
+          <p class="sf-note">Submissions are reviewed manually. We add quality tools and repos that provide real value.</p>
+        </form>
+      </section>
+      <script>
+        function handleSubmit(e){
+          e.preventDefault();
+          var f=e.target;
+          var data={type:f.type.value,name:f.name.value,url:f.url.value,description:f.description.value,email:f.email.value};
+          fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(function(){
+            f.innerHTML='<div style="text-align:center;padding:40px;color:var(--accent);font-size:16px;">Thanks! Your submission has been received.</div>';
+          }).catch(function(){
+            f.innerHTML='<div style="text-align:center;padding:40px;color:#f87171;">Something went wrong. Try again later.</div>';
+          });
+        }
+      </script>
+      ${renderFooter()}
+      </body></html>`, { headers: { 'Content-Type': 'text/html;charset=utf-8' } });
+    }
+
+    // ---- SUBMIT API ----
+    if (path === '/api/submit' && request.method === 'POST') {
+      try {
+        const data = await request.json();
+        if (env.DB) {
+          await env.DB.prepare("CREATE TABLE IF NOT EXISTS submissions (id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT, name TEXT, url TEXT, description TEXT, email TEXT, created_at TEXT DEFAULT (datetime('now')))").run();
+          await env.DB.prepare('INSERT INTO submissions (type, name, url, description, email) VALUES (?, ?, ?, ?, ?)').bind(data.type || '', data.name || '', data.url || '', data.description || '', data.email || '').run();
+        }
+        return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } });
+      } catch (e) {
+        return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } });
+      }
+    }
 
     // ---- SITEMAP ----
     if (path === '/sitemap.xml') {
