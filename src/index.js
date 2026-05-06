@@ -1139,9 +1139,20 @@ async function fetchTrendingRepos(env) {
       // Trending bonus (0-20)
       if (r.source && r.source.startsWith('trending')) quality += 20;
       else if (r.source === 'agentskill') quality += 10;
-      // Suspicious flags
+      // Trust vetting
+      const verifiedOrgs = ['microsoft','google','meta','anthropic','openai','huggingface','cloudflare','vercel','github','bytedance','apple','nvidia','aws','mozilla','stripe','supabase','langchain-ai','langgenius','n8n-io','modelcontextprotocol'];
+      const owner = (r.name || '').split('/')[0].toLowerCase();
+      const isVerifiedOrg = verifiedOrgs.includes(owner);
+      const hasGoodDesc = r.description && r.description.length > 20;
       const suspicious = !r.description || r.description.length < 10 || r.stars < 5;
-      return { ...r, quality, suspicious };
+
+      let trust = 'new';
+      if (isVerifiedOrg) trust = 'verified';
+      else if (r.stars >= 1000 && hasGoodDesc) trust = 'trusted';
+      else if (r.stars >= 100 && hasGoodDesc) trust = 'community';
+      else if (r.stars < 20 || !hasGoodDesc) trust = 'caution';
+
+      return { ...r, quality, suspicious, trust };
     });
 
     // Filter out suspicious, sort by quality then stars, take top 100
@@ -2895,12 +2906,17 @@ function renderHTML(articles, models, trendingRepos) {
         const lc = langColors[r.language] || '#8b949e';
         const owner = r.name.split('/')[0] || '';
         const repo = r.name.split('/')[1] || r.name;
+        const trustColors = {verified:'#4ade80',trusted:'#60a5fa',community:'#a78bfa','new':'#fbbf24',caution:'#f87171'};
+        const trustLabels = {verified:'Verified',trusted:'Trusted',community:'Community','new':'New',caution:'Caution'};
+        const tc = trustColors[r.trust] || '#8b949e';
+        const tl = trustLabels[r.trust] || '';
         return `
         <a href="${r.url}" target="_blank" rel="noopener" style="display:block;border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:16px;transition:border-color 0.2s;text-decoration:none;color:inherit;background:rgba(255,255,255,0.02);" onmouseover="this.style.borderColor='rgba(255,255,255,0.25)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="#8b949e"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"/></svg>
             <span style="font-size:13px;color:#8b949e;">${owner} /</span>
             <span style="font-size:13px;font-weight:600;color:#58a6ff;">${repo}</span>
+            ${tl ? `<span style="font-size:9px;font-family:'JetBrains Mono',monospace;color:${tc};border:1px solid ${tc}33;padding:1px 6px;border-radius:3px;margin-left:auto;">${tl}</span>` : ''}
           </div>
           <div style="font-size:12px;color:#8b949e;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:36px;">${r.description || 'No description'}</div>
           <div style="display:flex;align-items:center;gap:16px;margin-top:12px;font-size:12px;color:#8b949e;">
