@@ -220,6 +220,35 @@ const COMPARISONS = [
   { a: 'Kagi', b: 'Perplexity', slug: 'kagi-vs-perplexity' },
   { a: 'Leonardo', b: 'Midjourney', slug: 'leonardo-vs-midjourney' },
   { a: 'Kling', b: 'Sora', slug: 'kling-vs-sora' },
+  { a: 'GPT-5', b: 'Claude Opus', slug: 'gpt-5-vs-claude-opus' },
+  { a: 'Gemini 3', b: 'GPT-5', slug: 'gemini-3-vs-gpt-5' },
+  { a: 'Llama 4', b: 'Claude Sonnet', slug: 'llama-4-vs-claude-sonnet' },
+  { a: 'Cursor', b: 'Claude Code', slug: 'cursor-vs-claude-code' },
+  { a: 'Windsurf', b: 'Bolt', slug: 'windsurf-vs-bolt' },
+  { a: 'ChatGPT', b: 'Perplexity', slug: 'chatgpt-vs-perplexity' },
+  { a: 'Lovable', b: 'v0', slug: 'lovable-vs-v0' },
+  { a: 'Devin', b: 'Cursor', slug: 'devin-vs-cursor' },
+  { a: 'ElevenLabs', b: 'PlayHT', slug: 'elevenlabs-vs-playht' },
+  { a: 'Veo 3', b: 'Sora', slug: 'veo-3-vs-sora' },
+  { a: 'Claude', b: 'Llama', slug: 'claude-vs-llama' },
+  { a: 'Gemini', b: 'Claude', slug: 'gemini-vs-claude' },
+  { a: 'Replit', b: 'Cursor', slug: 'replit-vs-cursor' },
+  { a: 'Dify', b: 'LangChain', slug: 'dify-vs-langchain' },
+  { a: 'n8n', b: 'Zapier', slug: 'n8n-vs-zapier' },
+  { a: 'Supabase', b: 'Firebase', slug: 'supabase-vs-firebase' },
+  { a: 'Vercel', b: 'Netlify', slug: 'vercel-vs-netlify' },
+  { a: 'Flux', b: 'Stable Diffusion', slug: 'flux-vs-stable-diffusion' },
+  { a: 'Codex', b: 'Claude Code', slug: 'codex-vs-claude-code' },
+  { a: 'Grok', b: 'ChatGPT', slug: 'grok-vs-chatgpt' },
+  { a: 'Anthropic', b: 'OpenAI', slug: 'anthropic-vs-openai' },
+  { a: 'Mistral', b: 'Llama', slug: 'mistral-vs-llama' },
+  { a: 'DeepSeek', b: 'Claude', slug: 'deepseek-vs-claude' },
+  { a: 'Otter.ai', b: 'Fireflies.ai', slug: 'otter-vs-fireflies' },
+  { a: 'Canva AI', b: 'Adobe Firefly', slug: 'canva-ai-vs-adobe-firefly' },
+  { a: 'Notion AI', b: 'ChatGPT', slug: 'notion-ai-vs-chatgpt' },
+  { a: 'Linear', b: 'Jira', slug: 'linear-vs-jira' },
+  { a: 'Warp', b: 'iTerm', slug: 'warp-vs-iterm' },
+  { a: 'Raycast', b: 'Alfred', slug: 'raycast-vs-alfred' },
 ];
 
 const TOOL_CATEGORIES = ['coding', 'writing', 'image', 'video', 'chat', 'productivity', 'search', 'devtools'];
@@ -2452,7 +2481,7 @@ function renderHomeDashboard({ newsLatest, modelRankings, trendingRepos, dashboa
 
     /* Ticker */
     .ticker-wrap { width: 100%; overflow: hidden; background: rgba(0,0,0,0.6); border-bottom: 1px solid var(--border); padding: 8px 0; }
-    .ticker { display: inline-flex; white-space: nowrap; animation: tickerScroll 12s linear infinite; }
+    .ticker { display: inline-flex; white-space: nowrap; animation: tickerScroll 20s linear infinite; will-change: transform; }
     .ticker-item { display: inline-flex; align-items: center; gap: 6px; padding: 0 24px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-secondary); }
     .ticker-item .ticker-score { color: var(--accent); font-weight: 500; }
     @keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
@@ -2653,7 +2682,7 @@ function renderHTML(articles, models, trendingRepos) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>whatstrending.ai — AI Intelligence Dashboard</title>
-  <meta name="description" content="The latest AI news, model rankings, and tool discovery. Updated daily.">
+  <meta name="description" content="Track what's trending in AI — latest news, model rankings, GitHub trending repos, tool comparisons. Auto-updated every 6 hours.">
   <meta name="robots" content="index, follow">
 
   <!-- Google tag (gtag.js) -->
@@ -2717,20 +2746,9 @@ function renderHTML(articles, models, trendingRepos) {
     .nav-cta:hover { background: var(--accent-hover); box-shadow: 0 4px 16px rgba(110,231,183,0.2); }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    .hero { padding: 80px 0 60px; margin-bottom: 40px; text-align: center; position: relative; overflow: hidden; border-bottom: 1px solid var(--border); background: #0a0a0f; }
-    .hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(110,231,183,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(110,231,183,0.05) 1px, transparent 1px); background-size: 40px 40px; animation: gridShift 8s linear infinite; }
-    .hero-grid::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, transparent 30%, #0a0a0f 70%); }
-    @keyframes gridShift { 0% { transform: translate(0,0); } 100% { transform: translate(40px,40px); } }
-    .hero-scan { position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(110,231,183,0.6), transparent); animation: scanLine 3s ease-in-out infinite; box-shadow: 0 0 20px rgba(110,231,183,0.3), 0 0 60px rgba(110,231,183,0.1); }
-    @keyframes scanLine { 0% { top: -2px; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
-    .hero-glow { position: absolute; top: 50%; left: 50%; width: 400px; height: 400px; transform: translate(-50%,-50%); border-radius: 50%; background: radial-gradient(circle, rgba(110,231,183,0.06), transparent 60%); animation: heroBreath 5s ease-in-out infinite; }
-    @keyframes heroBreath { 0%,100% { transform: translate(-50%,-50%) scale(0.9); opacity: 0.5; } 50% { transform: translate(-50%,-50%) scale(1.1); opacity: 1; } }
-    .hero-corner { position: absolute; width: 20px; height: 20px; border-color: rgba(110,231,183,0.2); border-style: solid; }
-    .hero-corner-tl { top: 20px; left: 20px; border-width: 2px 0 0 2px; }
-    .hero-corner-tr { top: 20px; right: 20px; border-width: 2px 2px 0 0; }
-    .hero-corner-bl { bottom: 20px; left: 20px; border-width: 0 0 2px 2px; }
-    .hero-corner-br { bottom: 20px; right: 20px; border-width: 0 2px 2px 0; }
-    .hero::before { content: ''; position: absolute; bottom: -200px; left: 50%; transform: translateX(-50%); width: 600px; height: 400px; background: radial-gradient(ellipse at center, rgba(110,231,183,0.1) 0%, transparent 70%); pointer-events: none; z-index: 0; filter: blur(80px); }
+    .hero { padding: 80px 0 64px; margin-bottom: 40px; text-align: center; position: relative; overflow: hidden; border-bottom: 1px solid var(--border); background: #050508; }
+    .hero-mesh { position: absolute; inset: 0; }
+    .hero-top-line { position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent 20%, rgba(110,231,183,0.12) 50%, transparent 80%); z-index: 2; }
     .hero-title { font-size: 40px; font-weight: 700; letter-spacing: -1.5px; line-height: 1.15; margin-bottom: 16px; color: var(--text-primary); }
     .hero-title .accent { background: linear-gradient(135deg, #00c8ff, #00ffa3, #00c8ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .hero-subtitle { font-size: 15px; color: var(--text-secondary); max-width: 420px; margin: 0 auto 20px; line-height: 1.6; font-weight: 400; }
@@ -2791,7 +2809,7 @@ function renderHTML(articles, models, trendingRepos) {
     .newsletter-btn { font-family: inherit; font-size: 13px; font-weight: 600; padding: 10px 16px; background: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer; transition: background var(--transition); width: 100%; }
     .newsletter-btn:hover { background: var(--accent-hover); }
     .ticker-wrap { overflow: hidden; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.01); margin-bottom: 40px; }
-    .ticker { display: flex; animation: tickerScroll 10s linear infinite; white-space: nowrap; }
+    .ticker { display: flex; animation: tickerScroll 20s linear infinite; white-space: nowrap; will-change: transform; }
     .ticker-item { display: inline-flex; align-items: center; gap: 6px; padding: 10px 28px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-secondary); flex-shrink: 0; }
     .ticker-dot { width: 6px; height: 6px; border-radius: 50%; }
     .ticker-dot.up { background: #00ffa3; box-shadow: 0 0 6px rgba(16,185,129,0.5); }
@@ -2848,13 +2866,8 @@ function renderHTML(articles, models, trendingRepos) {
 
   <!-- Hero -->
   <section class="hero">
-    <div class="hero-grid"></div>
-    <div class="hero-glow"></div>
-    <div class="hero-scan"></div>
-    <div class="hero-corner hero-corner-tl"></div>
-    <div class="hero-corner hero-corner-tr"></div>
-    <div class="hero-corner hero-corner-bl"></div>
-    <div class="hero-corner hero-corner-br"></div>
+    <canvas class="hero-mesh" id="heroMesh"></canvas>
+    <div class="hero-top-line"></div>
     <div class="container" style="position:relative;z-index:1;">
       <h1 class="hero-title">What's Trending in <span class="accent">AI</span></h1>
       <p class="hero-subtitle">The latest in AI models, tools, and industry moves.</p>
@@ -2868,7 +2881,7 @@ function renderHTML(articles, models, trendingRepos) {
   <!-- Trending Ticker -->
   <div class="ticker-wrap">
     <div class="ticker">
-      ${tickerHTML}
+      ${tickerHTML}${tickerHTML}
     </div>
   </div>
 
@@ -2969,6 +2982,39 @@ function renderHTML(articles, models, trendingRepos) {
     </div>
   </footer>
 
+<script>
+(function(){
+  var c=document.getElementById('heroMesh');
+  if(!c)return;
+  c.width=c.parentElement.offsetWidth;c.height=c.parentElement.offsetHeight;
+  var ctx=c.getContext('2d');
+  var blobs=[
+    {x:c.width*0.2,y:c.height*0.3,r:130,color:[110,231,183],speed:0.7,phase:0},
+    {x:c.width*0.7,y:c.height*0.5,r:110,color:[110,231,183],speed:0.5,phase:2},
+    {x:c.width*0.5,y:c.height*0.65,r:90,color:[52,211,153],speed:0.6,phase:4},
+    {x:c.width*0.85,y:c.height*0.25,r:80,color:[74,222,128],speed:0.4,phase:1},
+    {x:c.width*0.1,y:c.height*0.7,r:70,color:[110,231,183],speed:0.8,phase:3}
+  ];
+  function draw(t){
+    ctx.clearRect(0,0,c.width,c.height);
+    var ts=t*0.001;
+    for(var i=0;i<blobs.length;i++){
+      var b=blobs[i];
+      var bx=b.x+Math.sin(ts*b.speed+b.phase)*40;
+      var by=b.y+Math.cos(ts*b.speed*0.7+b.phase)*25;
+      var pulse=0.8+Math.sin(ts*b.speed*1.2+b.phase)*0.3;
+      var grad=ctx.createRadialGradient(bx,by,0,bx,by,b.r*pulse);
+      grad.addColorStop(0,'rgba('+b.color[0]+','+b.color[1]+','+b.color[2]+',0.06)');
+      grad.addColorStop(0.5,'rgba('+b.color[0]+','+b.color[1]+','+b.color[2]+',0.02)');
+      grad.addColorStop(1,'rgba('+b.color[0]+','+b.color[1]+','+b.color[2]+',0)');
+      ctx.fillStyle=grad;
+      ctx.fillRect(0,0,c.width,c.height);
+    }
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
+</script>
 </body>
 </html>`;
 }

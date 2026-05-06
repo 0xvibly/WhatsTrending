@@ -5,6 +5,7 @@ workers_dev = false
 
 routes = [
   { pattern = "whatstrending.ai", custom_domain = true },
+  { pattern = "www.whatstrending.ai/*", zone_name = "whatstrending.ai" },
 ]
 
 [[d1_databases]]
