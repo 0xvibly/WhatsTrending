@@ -4392,6 +4392,7 @@ fetch('/api/most-read').then(function(r){return r.json();}).then(function(res){
   }).join('');
 }).catch(function(){});
 </script>
+${renderFooter()}
 </body>
 </html>`;
 }
