@@ -21,4 +21,4 @@ id = "4271d8a0518d48bcb37aa270dcc08927"
 binding = "AI"
 
 [triggers]
-crons = ["0 */6 * * *"]
+crons = ["0 */6 * * *", "0 3 * * SUN"]
